@@ -22,17 +22,6 @@ function SpendingPage() {
         {label: 'Animali', value: 50},
     ];
 
-
-    const sampleData = [
-        {date: '2023-1-01', value: 120},
-        {date: '2023-1-05', value: 150},
-        {date: '2024-1-02', value: 150},
-        {date: '2025-2-03', value: 170},
-        {date: '2025-3-04', value: 90},
-        {date: '2026-4-05', value: 200},
-        {date: '2026-5-06', value: 240},
-
-    ];
 // -------------------------------------------------------
 
     return (

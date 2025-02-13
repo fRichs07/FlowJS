@@ -11,26 +11,13 @@ import Dataset_style from "../js_styles/Dataset_style.js";
 import FilterPopup from "./FilterPopup.jsx";
 import {ButtonDS, extractUniqueValues} from "./DatasetButtons.jsx";
 import InsertPopup from "./InsertPopup.jsx";
-
-
-// Dati di esempio
-const data = [
-    {id: 1, User: "Home", Amount: 12.3, Class: "@fat", Date: "1-2-2024", Method: "883-b"},
-    {id: 2, User: "A", Amount: 14, Class: "@alc", Date: "2-2-2023", Method: "883-b"},
-    {id: 3, User: "R", Amount: 72, Class: "@ser", Date: "3-2-2024", Method: "883-b"},
-    {id: 4, User: "R", Amount: 340, Class: "@tra", Date: "4-2-2024", Method: "883-b"},
-    {id: 5, User: "R", Amount: 120, Class: "@dpr", Date: "5-2-2024", Method: "332-b"},
-    {id: 6, User: "A", Amount: 11, Class: "@fact", Date: "5-2-2024", Method: "883-b"},
-    {id: 7, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method: "332-b"},
-    {id: 8, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method: "821-b"},
-    {id: 9, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method: "821-b"},
-    {id: 10, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method: "821-b"},
-
-    // {id: 10, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method:"contanti"},
-
-];
-
-
+import axios from "axios";
+// const data_from_flask = []
+const data_from_flask = (await axios({
+    method: 'get',
+    url: 'http://127.0.0.1:5000/ds/all',
+})).data
+console.log(data_from_flask);
 // Definizione delle colonne
 const columns = [
     {
@@ -68,7 +55,7 @@ const columns = [
 
 function LeftCol() {
 
-    let [tableData, setTableData] = useState(data);
+    let [tableData, setTableData] = useState(data_from_flask);
     let [users, setUsers] = useState(extractUniqueValues(tableData, 'User'));
     let [Class, setClass] = useState(extractUniqueValues(tableData, 'Class'));
     let [methods, setMethods] = useState(extractUniqueValues(tableData, 'Method'));
@@ -130,7 +117,7 @@ function LeftCol() {
 
                 <button style={Dataset_style.DSButton} onClick={
                     () => {
-                        setTableData(data)
+                        setTableData(data_from_flask)
                     }}>
                     <FaArrowRotateLeft size={15}/>
                 </button>
