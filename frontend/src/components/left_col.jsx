@@ -12,12 +12,16 @@ import FilterPopup from "./FilterPopup.jsx";
 import {ButtonDS, extractUniqueValues} from "./DatasetButtons.jsx";
 import InsertPopup from "./InsertPopup.jsx";
 import axios from "axios";
-// const data_from_flask = []
+
 const data_from_flask = (await axios({
     method: 'get',
-    url: 'http://127.0.0.1:5000/ds/all',
+    url: 'http://localhost:5000/ds/all',
 })).data
-console.log(data_from_flask);
+// console.log("POST: ",await axios({
+//     method: 'post',
+//     url: 'http://flask_server:5000/dev/post', //non so se localhost è giusto invece di utilizzare mongodb
+//     data: {"nome": "Alice", "età": 30}
+// }).data)
 // Definizione delle colonne
 const columns = [
     {

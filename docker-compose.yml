@@ -24,13 +24,30 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./flask_server:/app  # Monta la cartella locale nel container
+      - ./flask_server:/app
 
     environment:
-      - FLASK_ENV=development  # Enables hot reloading
+      - FLASK_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/flow
+    depends_on:
+      - mongodb
+    networks:
+      - app_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
     networks:
       - app_network
 
 networks:
   app_network:
     driver: bridge
+
+volumes:
+  mongodb_data:
