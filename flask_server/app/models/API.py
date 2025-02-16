@@ -19,5 +19,6 @@ def get_expenses():
     return  find_all_documents("expenses")
 
 def insert_expense(expense):
-    res = db.insert_document("expenses", expense)
+    res = insert_document("expenses", expense.to_dict())
+
     return res

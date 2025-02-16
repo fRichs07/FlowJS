@@ -1,7 +1,14 @@
+from datetime import datetime
 from flask import request, jsonify
 from .db import db
 from .models.API import *
+from .models import API
+from .models.Expense import Expense
+
 # Dataset data
+
+date_format = "%Y-%m-%d"
+
 data_ds = [
     {"id": 0, "User": "Home", "Amount": 122.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
     {"id": 1, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
@@ -40,6 +47,7 @@ def send_json(data):
         return data
     else:
         return []
+
 def init_routes(app):
     ## Send the dataset entries to the frontend
     @app.route("/ds/all")
@@ -75,12 +83,31 @@ def init_routes(app):
         else:
             return "Richiesta POST, ricevuta GET"
 
-    @app.route('/ds/all', methods=['GET'])
-    def get_collection():
-        """Example of fetching documents from MongoDB"""
-        collection = db.test_collection
-        data = get_expenses()
+    @app.route('/expenses/', methods=['POST'])
+    def insert_new_expense():
+        print("ciao")
+        """Insert a new expense in the database"""
+        if request.method == "POST":
+            data = request.get_json() or request.form.to_dict()
 
-        return jsonify(data)
+            amount = int(data['amount'])
+            date = datetime.strptime(data['date'], date_format)
+            tag = data['tag']
+            who = data['who']
+            method = data['method']
+            desc = data['desc']
+            category = data['category']
 
+            if amount < 0:
+                return jsonify({"error": "Amount must be positive"}), 500
+            if not date:
+                return jsonify({"error": "Date not provided or error in formatting (%d-%m-%Y %H:%M)"}), 500
 
+            if not (date and tag and who and method and desc and category):
+                return jsonify({"error": "Some fields are missing"}), 500
+
+            new_expense = Expense(amount, category, desc, date, tag, who, method)
+            print( insert_expense(new_expense) )
+            return  new_expense.__repr__()# restituisce i dati in formato JSON
+        else:
+            return "Richiesta POST, ricevuta GET"

@@ -1,15 +1,39 @@
 import PopUpStyle from "../js_styles/PopUpStyle.js";
 import Flow_colors from "../js_styles/colors.js";
 import {useState} from "react";
+import axios from "axios";
 
 //     {id: 10, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method:"821-b"},
 function InsertPopup({action, close}) {
     let [name, setName] = useState('');
-    let [amount, setAmount] = useState(0);
+    let [amount, setAmount] = useState(0.0);
     let [date, setDate] = useState('');
     let [cls, setCls] = useState('');
     let [method, setMethod] = useState('');
-    let [account, setAccount] = useState('');
+    let [description, setDescription] = useState('');
+    let [category, setCategory] = useState('...');
+
+
+
+    const saveExpense = () => {
+        const data_from_flask = (axios({
+            method: 'post',
+            url: 'http://localhost:5000/expenses/',
+            data: {
+                who: name,
+                amount: amount,
+                date: date,
+                tag: cls,
+                method: method,
+                desc: description,
+                category: category,
+            }
+        }))
+
+        .catch(err => {
+            console.log(err) // TODO: Nessun handling di errore se non va a buon fine la richiesta per ora
+        })
+    }
 
     return (<div style={{...PopUpStyle.FilterPopUp, color: Flow_colors.text_color}}>
         <h1 style={{margin: "10px"}}>Inserisci una nuova spesa</h1>
@@ -26,7 +50,7 @@ function InsertPopup({action, close}) {
                 style={{margin: "10px"}}
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(parseInt(e.target.value, 10))}
+                onChange={(e) => setAmount(parseFloat(e.target.value, 10))}
             />
         </label>
         <label style={{margin: "10px"}}>Data in cui è avvenuta:
@@ -53,18 +77,26 @@ function InsertPopup({action, close}) {
                 onChange={(e) => setMethod(e.target.value)}
             />
         </label>
-        <label style={{margin: "10px"}}>Conto corrente:
+        <label style={{margin: "10px"}}>Categoria della spesa:
             <input
                 style={{margin: "10px"}}
                 type="text"
-                value={account}
-                onChange={(e) => setAccount(e.target.value)}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+            />
+        </label>
+        <label style={{margin: "10px"}}>Categoria della spesa:
+            <textarea
+                style={{margin: "10px"}}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
             />
         </label>
         <div>
-            <button style={{...PopUpStyle.SaveButton, marginLeft: "80%", marginTop: "20%"}} onClick={(e) => {
+            <button style={{...PopUpStyle.SaveButton, marginLeft: "80%", marginTop: "5%"}} onClick={(e) => {
                 e.preventDefault();
-                action({id: 11, User: name, Amount: amount, Class: cls, Date: date, Method: method, Account:account});
+                action({id: 11, User: name, Amount: amount, Class: cls, Date: date, Method: method});
+                saveExpense();
                 close();
             }}>
                 Salva

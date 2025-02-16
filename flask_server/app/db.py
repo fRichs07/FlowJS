@@ -29,7 +29,7 @@ def close_db():
 
 def get_collection(collection_name):
     """Fetch a specific collection from MongoDB."""
-    if db:
+    if db is not None:
         return db[collection_name]
     raise Exception("No database connection available.")
 
@@ -60,7 +60,7 @@ def insert_document(collection_name, document):
         return result.inserted_id
     except Exception as e:
         print(f"Error inserting document: {e}")
-        return None
+        return e
 
 def delete_document(collection_name, query):
     """Delete documents based on a query."""
