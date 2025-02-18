@@ -5,45 +5,45 @@ import {IoFilter} from "react-icons/io5";
 import {TbSortAscending} from "react-icons/tb";
 import {FaArrowRotateLeft} from "react-icons/fa6";
 import {FaPen} from "react-icons/fa";
+import axios from "axios";
 import {IoIosAddCircleOutline} from "react-icons/io";
 
 import Dataset_style from "../js_styles/Dataset_style.js";
 import FilterPopup from "./FilterPopup.jsx";
 import {ButtonDS, extractUniqueValues} from "./DatasetButtons.jsx";
 import InsertPopup from "./InsertPopup.jsx";
-import axios from "axios";
 
-const data_from_flask = (await axios({
-    method: 'get',
-    url: 'http://localhost:5000/ds/all',
-})).data
-// console.log("POST: ",await axios({
-//     method: 'post',
-//     url: 'http://flask_server:5000/dev/post', //non so se localhost è giusto invece di utilizzare mongodb
-//     data: {"nome": "Alice", "età": 30}
-// }).data)
-// Definizione delle colonne
+function fetchTableData() {
+
+    return axios(
+        {
+            method: 'get',
+            url: 'http://localhost:5000/expenses/',
+        })
+        .then(res => {
+
+            return res;
+        })
+
+}
+
 const columns = [
-    {
-        name: "#",
-        selector: (row) => row.id,
-        width: "50px",
-    },
+
     {
         name: "Quantità",
-        selector: (row) => row.Amount,
+        selector: (row) => row.amount,
         width: "85px",
 
     },
     {
         name: "Utente",
-        selector: (row) => row.User,
+        selector: (row) => row.who,
         width: "90px",
 
     },
     {
         name: "Tipo",
-        selector: (row) => row.Class,
+        selector: (row) => row.category,
         width: "90px",
 
 
@@ -59,11 +59,10 @@ const columns = [
 
 function LeftCol() {
 
-    let [tableData, setTableData] = useState(data_from_flask);
+    let [tableData, setTableData] = useState([]);
     let [users, setUsers] = useState(extractUniqueValues(tableData, 'User'));
     let [Class, setClass] = useState(extractUniqueValues(tableData, 'Class'));
     let [methods, setMethods] = useState(extractUniqueValues(tableData, 'Method'));
-    let [newLine, setNewLine] = useState({});
 
     /*
     * Per il click della spesa nel dataset
@@ -72,7 +71,7 @@ function LeftCol() {
         /*TODO:
         * Si deve aggiungere una vista per mostrare nel dettaglio il contenuto della spesa
         * */
-        alert(`Row clicked: ID = ${row.id}, Name = ${row.firstName} ${row.lastName}`);
+        alert(`Row clicked: ID = ${row.id}, Name = ${row.who}, date = ${row.date}`);
     };
 
     /*
@@ -84,15 +83,29 @@ function LeftCol() {
         setUsers(users);
     }
 
-    /*La funzione passata a InsertPopUp per aggiungere un nuovo elemento nel dataset*/
+    /* La funzione passata a InsertPopUp per aggiungere un nuovo elemento nel dataset */
     const insertRow = (row) => {
         if (Object.keys(row).length !== 0) {
             setTableData([...tableData, row]);
         }
-        console.log("void", newLine, row)
     }
 
-    /* Per rendere attivi i filtri*/
+    useEffect(() => {
+        const fetchData = async () => {
+            if (tableData == null || tableData.length === 0) {
+                try {
+                    const response = await fetchTableData();
+                    setTableData(response.data);
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                }
+            }
+        };
+
+        fetchData();
+    }, [tableData]);
+
+    /* Per rendere attivi i filtri */
     useEffect(() => {
         let tmp = []
 
@@ -121,7 +134,7 @@ function LeftCol() {
 
                 <button style={Dataset_style.DSButton} onClick={
                     () => {
-                        setTableData(data_from_flask)
+                        setTableData([])
                     }}>
                     <FaArrowRotateLeft size={15}/>
                 </button>

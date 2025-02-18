@@ -1,5 +1,6 @@
+import json
 from datetime import datetime
-from flask import request, jsonify
+from flask import request, jsonify, Response
 from .db import db
 from .models.API import *
 from .models import API
@@ -85,7 +86,6 @@ def init_routes(app):
 
     @app.route('/expenses/', methods=['POST'])
     def insert_new_expense():
-        print("ciao")
         """Insert a new expense in the database"""
         if request.method == "POST":
             data = request.get_json() or request.form.to_dict()
@@ -111,3 +111,10 @@ def init_routes(app):
             return  new_expense.__repr__()# restituisce i dati in formato JSON
         else:
             return "Richiesta POST, ricevuta GET"
+
+
+    @app.route('/expenses/', methods=['GET'])
+    def get_exp():
+        json_data = json.dumps(get_expenses(), default=custom_serializer)
+        print(get_expenses())
+        return Response(json_data, mimetype='application/json')

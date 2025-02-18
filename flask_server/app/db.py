@@ -1,8 +1,21 @@
 from pymongo import MongoClient, errors
 from flask import current_app
+import json
+from bson import ObjectId
+from datetime import datetime
 
 client = None
 db = None
+
+# Custom function to handle ObjectId and datetime conversion
+def custom_serializer(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)  # Convert ObjectId to string
+    elif isinstance(obj, datetime):
+        return obj.isoformat()  # Convert datetime to ISO format
+    else:
+        return obj
+
 
 def init_db(app):
     """Initialize MongoDB connection with error handling."""
