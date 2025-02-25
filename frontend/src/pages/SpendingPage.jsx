@@ -6,7 +6,47 @@ import LeftCol from "../components/left_col.jsx";
 
 import Card_Styles from "../js_styles/Card_style.js";
 import GaugeChart from '../charts/GaugeChart.jsx';
-import LineChart from "../charts/LineChart.jsx";
+import axios from "axios";
+import React, {useEffect} from "react";
+
+function fetchExtraRatio() {
+
+    return axios(
+        {
+            method: 'get',
+            url: 'http://localhost:5000/chart/extrap/',
+        })
+        .then(res => {
+            return res;
+        })
+
+}
+
+function fetchFixedRatio() {
+
+    return axios(
+        {
+            method: 'get',
+            url: 'http://localhost:5000/chart/fixedp/',
+        })
+        .then(res => {
+            return res;
+        })
+
+}
+
+function fetchTotalRatio() {
+
+    return axios(
+        {
+            method: 'get',
+            url: 'http://localhost:5000/chart/totalp/',
+        })
+        .then(res => {
+            return res;
+        })
+
+}
 
 function SpendingPage() {
 
@@ -21,8 +61,58 @@ function SpendingPage() {
         {label: 'Extra', value: 90},
         {label: 'Animali', value: 50},
     ];
-
 // -------------------------------------------------------
+    const [extraRatio, setExtraRatio] = React.useState(null);
+    const [fixedRatio, setFixedRatio] = React.useState(null);
+    const [totalRatio, setTotalRatio] = React.useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (extraRatio == null) { // da problemi se il ds è vuoto!
+                try {
+                    const response = await fetchExtraRatio();
+                    setExtraRatio(response.data);
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                    setExtraRatio(0)
+                }
+            }
+        };
+
+        fetchData();
+    }, [extraRatio]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (fixedRatio == null) { // da problemi se il ds è vuoto!
+                try {
+                    const response = await fetchFixedRatio();
+                    setFixedRatio(response.data);
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                    setFixedRatio(0)
+                }
+            }
+        };
+
+        fetchData();
+    }, [fixedRatio]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (totalRatio == null) { // da problemi se il ds è vuoto!
+                try {
+                    const response = await fetchTotalRatio();
+                    setTotalRatio(response.data);
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                    setTotalRatio(0)
+                }
+            }
+        };
+
+        fetchData();
+    }, [setTotalRatio]);
 
     return (
         <div style={Card_Styles.cards_container}>
@@ -56,15 +146,15 @@ function SpendingPage() {
                         <h4>Percentuali di spese e risparmi </h4>
 
                         <div>
-                            <GaugeChart width={100} percentage={0.5}/>
+                            <GaugeChart width={100} percentage={totalRatio}/>
                             <h6>Totali</h6>
                         </div>
                         <div>
-                            <GaugeChart width={100} percentage={0.3}/>
+                            <GaugeChart width={100} percentage={extraRatio}/>
                             <h6>Extra</h6>
                         </div>
                         <div>
-                            <GaugeChart width={100} percentage={0.2}/>
+                            <GaugeChart width={100} percentage={fixedRatio}/>
                             <h6>Fisse</h6>
                         </div>
 

@@ -20,5 +20,29 @@ def get_expenses():
 
 def insert_expense(expense):
     res = insert_document("expenses", expense.to_dict())
-
     return res
+
+# ------------------------------------------------------------------------ #
+
+def get_tags_aggregate():
+    collection = get_collection('expenses')
+    return collection.aggregate([
+        {
+            "$group": {
+                "_id": "$tag",
+                "total_amount": {"$sum": "$amount"}
+            }
+        }
+    ])
+
+def get_extra_ratio():
+    collection = get_collection('expenses')
+    return collection.aggregate([
+        {
+            "$group": {
+                "_id": "$extra",
+                "total_amount": {"$sum": "$amount"}
+            }
+        }
+    ])
+

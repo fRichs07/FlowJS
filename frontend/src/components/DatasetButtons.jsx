@@ -22,6 +22,9 @@ export function ButtonDS({ PopupFunction, Icon }) {
 }
 
 export function extractUniqueValues(data, column) {
+    if (!data){
+        return null;
+    }
     return [...new Set(data.map(item => item[column]))];
 }
 

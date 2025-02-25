@@ -1,9 +1,7 @@
 import json
-from datetime import datetime
+
 from flask import request, jsonify, Response
-from .db import db
 from .models.API import *
-from .models import API
 from .models.Expense import Expense
 
 # Dataset data
@@ -50,39 +48,8 @@ def send_json(data):
         return []
 
 def init_routes(app):
-    ## Send the dataset entries to the frontend
-    @app.route("/ds/all")
-    def send_ds():
-        return send_json(data_ds)
 
-    ## Send method barchart data
-    @app.route("/chart/method")
-    def send_method_chart():
-        return send_json(data_chart)
 
-    ## Send the percentage of extras out the total spending
-    @app.route("/chart/extrapercentage")
-    def send_extra_percentage():
-        return str(data_gauge_extra)
-
-    ## Send the percentage of fixed spending out of the total
-    @app.route("/chart/fixedpercentage")
-    def send_fixed_percentage():
-        return str(data_gauge_fixed)
-
-    ## Sends the percentage of the monthly spending out of the heritage
-    @app.route("/chart/totalpercentage")
-    def send_total_percentage():
-        return str(data_gauge_total)
-
-    @app.route("/dev/post", methods=["POST"])
-    def send_some_data():
-        if request.method == "POST":
-            data = request.get_json() or request.form.to_dict()
-            print(data)
-            return jsonify(request.data)  # restituisce i dati in formato JSON
-        else:
-            return "Richiesta POST, ricevuta GET"
 
     @app.route('/expenses/', methods=['POST'])
     def insert_new_expense():
@@ -97,6 +64,7 @@ def init_routes(app):
             method = data['method']
             desc = data['desc']
             category = data['category']
+            extra = (data['extra'])
 
             if amount < 0:
                 return jsonify({"error": "Amount must be positive"}), 500
@@ -106,7 +74,7 @@ def init_routes(app):
             if not (date and tag and who and method and desc and category):
                 return jsonify({"error": "Some fields are missing"}), 500
 
-            new_expense = Expense(amount, category, desc, date, tag, who, method)
+            new_expense = Expense(amount, category, desc, date, tag, who, method, extra)
             print( insert_expense(new_expense) )
             return  new_expense.__repr__()# restituisce i dati in formato JSON
         else:
@@ -118,3 +86,36 @@ def init_routes(app):
         json_data = json.dumps(get_expenses(), default=custom_serializer)
         print(get_expenses())
         return Response(json_data, mimetype='application/json')
+
+
+# --------------- BAR CHARTS ROUTES -----------------------#
+    @app.route('/chart/tags/', methods=['GET'])
+    def get_chart_tags():
+        db_data = get_tags_aggregate()
+        return jsonify(list(db_data))
+
+
+# ------------ GAUGE CHARTS ROUTES -------------------------#
+
+    ## Send extra percentage out of the total spending
+    @app.route('/chart/extrap/', methods=['GET'])
+    def get_extra():
+        db_data = list(get_extra_ratio())
+        if len(db_data)>2:
+            ratio = ((db_data[0])['total_amount'] / (db_data[1])['total_amount'])
+            return ratio
+
+        else:
+            return "not enough data",509
+
+    ## Send the percentage of fixed spending out of the total
+    ## TODO: dopo la creazione dell ownings page
+    @app.route("/chart/fixedp/", methods=['GET'])
+    def send_fixed_percentage():
+        return str(0.11)
+
+    ## Sends the percentage of the monthly spending out of the heritage
+    ## TODO: dopo la creazione dell ownings page
+    @app.route("/chart/totalp/", methods=['GET'])
+    def send_total_percentage():
+        return str(0.1)

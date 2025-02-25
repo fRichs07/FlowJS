@@ -59,7 +59,7 @@ const columns = [
 
 function LeftCol() {
 
-    let [tableData, setTableData] = useState([]);
+    let [tableData, setTableData] = useState(null);
     let [users, setUsers] = useState(extractUniqueValues(tableData, 'User'));
     let [Class, setClass] = useState(extractUniqueValues(tableData, 'Class'));
     let [methods, setMethods] = useState(extractUniqueValues(tableData, 'Method'));
@@ -92,7 +92,7 @@ function LeftCol() {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (tableData == null || tableData.length === 0) {
+            if (tableData == null) { // da problemi se il ds è vuoto!
                 try {
                     const response = await fetchTableData();
                     setTableData(response.data);
@@ -108,7 +108,7 @@ function LeftCol() {
     /* Per rendere attivi i filtri */
     useEffect(() => {
         let tmp = []
-
+        if(tableData!==null)
         tableData.forEach(item => {
             // Verifica se l'elemento corrisponde ai filtri attivi
             const isMatch = (
@@ -129,7 +129,11 @@ function LeftCol() {
         <div>
             <div style={Dataset_style.DatasetButtonsContainer}>
                 <ButtonDS Icon={<IoFilter size={20}/>} PopupFunction={(close) => {
-                    return (<FilterPopup data={tableData} close={close} action={saveFilters}/>)
+                    var a = tableData
+                    if(a===null) {
+                        a = []
+                    }
+                    return (<FilterPopup data={a} close={close} action={saveFilters}/>)
                 }}/>
 
                 <button style={Dataset_style.DSButton} onClick={
@@ -163,7 +167,7 @@ function LeftCol() {
                 <DataTable
                     className="custom-datatable"
                     columns={columns}
-                    data={tableData}
+                    data={tableData === null ? [] : tableData}
                     pagination
                     paginationPerPage={10} // Numero massimo di righe per pagina
                     paginationRowsPerPageOptions={[10]} // Solo 5 righe per pagina

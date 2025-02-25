@@ -1,6 +1,4 @@
 from pymongo import MongoClient, errors
-from flask import current_app
-import json
 from bson import ObjectId
 from datetime import datetime
 

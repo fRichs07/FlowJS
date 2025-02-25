@@ -3,7 +3,7 @@ from typing import Dict
 from bson import ObjectId
 
 class Expense:
-    def __init__(self, amount: float, category: str, description: str = "", date: datetime = None, tag: str = "", who: str = "", method: str = ""):
+    def __init__(self, amount: float, category: str, description: str = "", date: datetime = None, tag: str = "", who: str = "", method: str = "", extra: bool = False):
         self.amount = amount  # Importo della spesa
         self.category = category  # Categoria della spesa (es. "Cibo", "Trasporti")
         self.description = description  # Descrizione opzionale
@@ -11,6 +11,7 @@ class Expense:
         self.tag = tag  # Tag opzionale per la spesa
         self.who = who  # Chi ha effettuato la spesa
         self.method = method  # Metodo di pagamento
+        self.extra = extra
 
     def to_dict(self) -> Dict:
         """Converte l'oggetto in un dizionario per MongoDB"""
@@ -22,7 +23,8 @@ class Expense:
             "date": self.date,
             "tag": self.tag,
             "who": self.who,
-            "method": self.method
+            "method": self.method,
+            "extra": self.extra
         }
 
     @classmethod
@@ -36,5 +38,6 @@ class Expense:
             tag=data.get("tag", ""),
             who=data.get("who", ""),
             method=data.get("method", ""),
+            extra=data.get("extra", False)
             # _id=str(data.get("_id"))
         )

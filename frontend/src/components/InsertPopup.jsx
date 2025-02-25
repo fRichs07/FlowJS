@@ -12,11 +12,12 @@ function InsertPopup({action, close}) {
     let [method, setMethod] = useState('');
     let [description, setDescription] = useState('');
     let [category, setCategory] = useState('...');
+    let [extraExpense, setExtraExpense] = useState(false);
 
 
 
     const saveExpense = () => {
-        const data_from_flask = (axios({
+        axios({
             method: 'post',
             url: 'http://localhost:5000/expenses/',
             data: {
@@ -27,9 +28,9 @@ function InsertPopup({action, close}) {
                 method: method,
                 desc: description,
                 category: category,
+                extra: extraExpense,
             }
-        }))
-
+        })
         .catch(err => {
             console.log(err) // TODO: Nessun handling di errore se non va a buon fine la richiesta per ora
         })
@@ -92,8 +93,12 @@ function InsertPopup({action, close}) {
                 onChange={(e) => setDescription(e.target.value)}
             />
         </label>
+        <label style={{ margin: "10px", display: "flex", alignItems: "center" }}>
+            <input type="checkbox" checked={extraExpense} onChange={(e) => setExtraExpense(e.target.checked)} style={{ marginRight: "10px" }} />
+            Spesa extra
+        </label>
         <div>
-            <button style={{...PopUpStyle.SaveButton, marginLeft: "80%", marginTop: "5%"}} onClick={(e) => {
+            <button style={{...PopUpStyle.SaveButton, marginLeft: "80%", marginTop: "0%"}} onClick={(e) => {
                 e.preventDefault();
                 action({id: 11, User: name, Amount: amount, Class: cls, Date: date, Method: method});
                 saveExpense();
