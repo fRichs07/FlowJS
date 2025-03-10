@@ -92,8 +92,12 @@ def init_routes(app):
     @app.route('/chart/tags/', methods=['GET'])
     def get_chart_tags():
         db_data = get_tags_aggregate()
-        return jsonify(list(db_data))
+        return jsonify(db_data)
 
+    @app.route('/chart/monthly_tags/', methods=['GET'])
+    def get_chart_monthly_tags():
+        db_data = get_monthly_tag_expenses()
+        return jsonify(db_data)
 
 # ------------ GAUGE CHARTS ROUTES -------------------------#
 
@@ -101,9 +105,10 @@ def init_routes(app):
     @app.route('/chart/extrap/', methods=['GET'])
     def get_extra():
         db_data = list(get_extra_ratio())
-        if len(db_data)>2:
+        if len(db_data)>1:
             ratio = ((db_data[0])['total_amount'] / (db_data[1])['total_amount'])
-            return ratio
+            # return str(ratio), db_data
+            return str(ratio)
 
         else:
             return "not enough data",509

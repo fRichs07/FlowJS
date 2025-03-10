@@ -15,7 +15,6 @@ function InsertPopup({action, close}) {
     let [extraExpense, setExtraExpense] = useState(false);
 
 
-
     const saveExpense = () => {
         axios({
             method: 'post',
@@ -31,9 +30,9 @@ function InsertPopup({action, close}) {
                 extra: extraExpense,
             }
         })
-        .catch(err => {
-            console.log(err) // TODO: Nessun handling di errore se non va a buon fine la richiesta per ora
-        })
+            .catch(err => {
+                console.log(err) // TODO: Nessun handling di errore se non va a buon fine la richiesta per ora
+            })
     }
 
     return (<div style={{...PopUpStyle.FilterPopUp, color: Flow_colors.text_color}}>
@@ -93,8 +92,9 @@ function InsertPopup({action, close}) {
                 onChange={(e) => setDescription(e.target.value)}
             />
         </label>
-        <label style={{ margin: "10px", display: "flex", alignItems: "center" }}>
-            <input type="checkbox" checked={extraExpense} onChange={(e) => setExtraExpense(e.target.checked)} style={{ marginRight: "10px" }} />
+        <label style={{margin: "10px", display: "flex", alignItems: "center"}}>
+            <input type="checkbox" checked={extraExpense} onChange={(e) => setExtraExpense(e.target.checked)}
+                   style={{marginRight: "10px"}}/>
             Spesa extra
         </label>
         <div>

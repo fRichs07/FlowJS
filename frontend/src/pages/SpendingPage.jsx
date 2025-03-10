@@ -6,6 +6,8 @@ import LeftCol from "../components/left_col.jsx";
 
 import Card_Styles from "../js_styles/Card_style.js";
 import GaugeChart from '../charts/GaugeChart.jsx';
+import MonthlyExpensesChart from '../charts/BarTime.jsx';
+
 import axios from "axios";
 import React, {useEffect} from "react";
 
@@ -48,23 +50,40 @@ function fetchTotalRatio() {
 
 }
 
+function fetchAggregateTags() {
+
+    return axios(
+        {
+            method: 'get',
+            url: 'http://localhost:5000/chart/tags/',
+        })
+        .then(res => {
+            return res;
+        })
+
+}
+
+function fetchAggregateMonthlyTags() {
+
+    return axios(
+        {
+            method: 'get',
+            url: 'http://localhost:5000/chart/monthly_tags/',
+        })
+        .then(res => {
+            return res;
+        })
+
+}
+
 function SpendingPage() {
 
-// Dati simulati per rappresentare le spese nel tempo
-
-    const data = [
-        {label: 'Tabacco', value: 40},
-        {label: 'Bollette', value: 80},
-        {label: 'Casa', value: 45},
-        {label: 'Cibo', value: 60},
-        {label: 'Vestiti', value: 20},
-        {label: 'Extra', value: 90},
-        {label: 'Animali', value: 50},
-    ];
-// -------------------------------------------------------
     const [extraRatio, setExtraRatio] = React.useState(null);
     const [fixedRatio, setFixedRatio] = React.useState(null);
     const [totalRatio, setTotalRatio] = React.useState(null);
+    const [tagsAggr, setTagsAggr] = React.useState(null);
+    const [montTagsAggr, setMontTagsAggr] = React.useState(null);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -112,8 +131,57 @@ function SpendingPage() {
         };
 
         fetchData();
-    }, [setTotalRatio]);
+    }, [totalRatio]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            if (tagsAggr == null) { // da problemi se il ds è vuoto!
+                try {
+                    const response = await fetchAggregateTags();
+                    setTagsAggr(response.data);
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                    setTagsAggr(0)
+                }
+            }
+        };
+
+        fetchData();
+        console.log(tagsAggr)
+    }, [tagsAggr]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (montTagsAggr == null) { // da problemi se il ds è vuoto!
+                try {
+                    const response = await fetchAggregateMonthlyTags();
+                    setMontTagsAggr(response.data);
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                    setMontTagsAggr([])
+                }
+            }
+        };
+
+        fetchData();
+        console.log(montTagsAggr)
+    }, [montTagsAggr]);
+
+    function showTagsChart(){
+        if (tagsAggr){
+
+            return <BarChart data={tagsAggr} width={450} height={250}/>
+        }
+        return null
+    }
+
+    function showMonthTagsChart(){
+        if (montTagsAggr){
+
+            return <MonthlyExpensesChart data={montTagsAggr} width={450} height={250}/>
+        }
+        return null
+    }
     return (
         <div style={Card_Styles.cards_container}>
             <Row className="w-100">
@@ -129,13 +197,13 @@ function SpendingPage() {
                     {/*Chart "spese per metodo"*/}
                     <div style={{...Card_Styles.cards, height: "49%"}}>
                         <h5>Spese per metodo</h5>
-                        <BarChart data={data} width={450} height={250}/>
+                        {showTagsChart() }
                     </div>
 
                     {/*Chart "spese per categoria"*/}
                     <div style={{...Card_Styles.cards, height: "49%"}}>
                         <h5>Spese per categoria</h5>
-                        <BarChart data={data} width={450} height={250}/>
+                        {showMonthTagsChart()}
                     </div>
                 </Col>
 

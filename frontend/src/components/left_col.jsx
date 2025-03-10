@@ -50,7 +50,7 @@ const columns = [
     },
     {
         name: "Date",
-        selector: (row) => row.Date,
+        selector: (row) => row.date,
         width: "90px",
 
     },
