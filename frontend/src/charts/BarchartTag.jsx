@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import Flow_colors from "../js_styles/colors.js";
 
-const BarChart = ({ data, width, height }) => {
+const BarchartTag = ({ data, width, height }) => {
     const chartRef = useRef();
 
     useEffect(() => {
@@ -61,4 +61,4 @@ const BarChart = ({ data, width, height }) => {
     return <div ref={chartRef}></div>;
 };
 
-export default BarChart;
+export default BarchartTag;

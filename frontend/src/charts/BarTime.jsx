@@ -54,7 +54,7 @@ const MonthlyExpensesChart = ({ data, width = 800, height = 500 }) => {
         // Scala colore: usa una palette di default o i colori definiti in Flow_colors
         const color = d3.scaleOrdinal()
             .domain(tags)
-            .range(d3.schemeTableau10);
+            .range(d3.schemeSet3);
 
         // 5. Disegna le barre impilate e aggiungi il testo per il tag
         const groups = svg.append('g')
@@ -80,7 +80,7 @@ const MonthlyExpensesChart = ({ data, width = 800, height = 500 }) => {
             .attr('y', d => y(d[1]) + (y(d[0]) - y(d[1])) / 2)
             .attr('text-anchor', 'middle')
             // Imposta il colore del testo in base al contrasto
-            .attr('fill', 'white')
+            .attr('fill', 'black')
             .style('font-size', '10px')
             .text(function(d) {
                 // Calcola l'altezza del segmento

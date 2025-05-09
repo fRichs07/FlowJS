@@ -11,7 +11,7 @@ import {IoIosAddCircleOutline} from "react-icons/io";
 import Dataset_style from "../js_styles/Dataset_style.js";
 import FilterPopup from "./FilterPopup.jsx";
 import {ButtonDS, extractUniqueValues} from "./DatasetButtons.jsx";
-import InsertPopup from "./InsertPopup.jsx";
+import InsertExpensePopup from "./InsertExpensePopup.jsx";
 
 function fetchTableData() {
 
@@ -29,12 +29,7 @@ function fetchTableData() {
 
 const columns = [
 
-    {
-        name: "Quantità",
-        selector: (row) => row.amount,
-        width: "85px",
 
-    },
     {
         name: "Utente",
         selector: (row) => row.who,
@@ -49,9 +44,16 @@ const columns = [
 
     },
     {
-        name: "Date",
+        name: "Data",
         selector: (row) => row.date,
         width: "90px",
+
+    },
+
+    {
+        name: "$",
+        selector: (row) => row.amount,
+        width: "85px",
 
     },
 
@@ -60,7 +62,7 @@ const columns = [
 function LeftCol() {
 
     let [tableData, setTableData] = useState(null);
-    let [users, setUsers] = useState(extractUniqueValues(tableData, 'User'));
+    let [users, setUsers] = useState(extractUniqueValues(tableData, 'who'));
     let [Class, setClass] = useState(extractUniqueValues(tableData, 'Class'));
     let [methods, setMethods] = useState(extractUniqueValues(tableData, 'Method'));
 
@@ -108,19 +110,21 @@ function LeftCol() {
     /* Per rendere attivi i filtri */
     useEffect(() => {
         let tmp = []
-        if(tableData!==null)
-        tableData.forEach(item => {
-            // Verifica se l'elemento corrisponde ai filtri attivi
-            const isMatch = (
-                (users.length === extractUniqueValues(tableData, 'User').length || users.includes(item.User)) &&
-                (Class.length === extractUniqueValues(tableData, 'Class').length || Class.includes(item.Class)) &&
-                (methods.length === extractUniqueValues(tableData, 'Method').length || methods.includes(item.Method))
-            );
+        if(tableData!==null) {
+            console.log(tableData, "sono io");
+            tableData.forEach(item => {
+                // Verifica se l'elemento corrisponde ai filtri attivi
+                const isMatch = (
+                    (users.length === extractUniqueValues(tableData, 'who').length || users.includes(item.who)) &&
+                    (Class.length === extractUniqueValues(tableData, 'tag').length || Class.includes(item.tag)) &&
+                    (methods.length === extractUniqueValues(tableData, 'method').length || methods.includes(item.Method))
+                );
 
-            if (isMatch) {
-                tmp.push(item);
-            }
-        });
+                if (isMatch) {
+                    tmp.push(item);
+                }
+            });
+        }
 
         setTableData(tmp);
     }, [users, Class, methods])
@@ -158,7 +162,7 @@ function LeftCol() {
                 />
 
                 <ButtonDS Icon={<IoIosAddCircleOutline size={20}/>} PopupFunction={(close) => {
-                    return (<InsertPopup action={insertRow} close={close}/>)
+                    return (<InsertExpensePopup action={insertRow} close={close}/>)
                 }}/>
 
             </div>
@@ -172,7 +176,7 @@ function LeftCol() {
                     paginationPerPage={10} // Numero massimo di righe per pagina
                     paginationRowsPerPageOptions={[10]} // Solo 5 righe per pagina
                     customStyles={Dataset_style.customStyles}
-                    onRowClicked={handleRowClick} // Attach row click handler here
+                    onRowClicked={handleRowClick}
                     paginationComponentOptions={{noRowsPerPage: true}}
                 />
             </Container>

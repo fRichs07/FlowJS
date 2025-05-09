@@ -30,6 +30,7 @@ function FilterPopup({data, action, close}) {
             methods.push(item.Method);
         }
     });
+
     const removeItem = (item, list, f) => {
 
         let a = list.filter((i) => {

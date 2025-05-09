@@ -1,12 +1,11 @@
 import '../css/App.css';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import BarChart from '../charts/barchart.jsx';
 import LeftCol from "../components/left_col.jsx";
+import CenterCol from "../components/center_col.jsx";
+import RightCol from "../components/right_col.jsx";
 
 import Card_Styles from "../js_styles/Card_style.js";
-import GaugeChart from '../charts/GaugeChart.jsx';
-import MonthlyExpensesChart from '../charts/BarTime.jsx';
 
 import axios from "axios";
 import React, {useEffect} from "react";
@@ -167,67 +166,18 @@ function SpendingPage() {
         console.log(montTagsAggr)
     }, [montTagsAggr]);
 
-    function showTagsChart(){
-        if (tagsAggr){
-
-            return <BarChart data={tagsAggr} width={450} height={250}/>
-        }
-        return null
-    }
-
-    function showMonthTagsChart(){
-        if (montTagsAggr){
-
-            return <MonthlyExpensesChart data={montTagsAggr} width={450} height={250}/>
-        }
-        return null
-    }
     return (
         <div style={Card_Styles.cards_container}>
             <Row className="w-100">
-                {/*Prima colonna SX*/}
+
                 <Col xs={4}>
                     <div style={Card_Styles.cards}>
                         <LeftCol/>
                     </div>
                 </Col>
+                <CenterCol montTagsAggr={montTagsAggr} tagsAggr={tagsAggr}/>
+                <RightCol fixedRatio={fixedRatio} extraRatio={extraRatio} totalRatio={totalRatio}/>
 
-                {/*Colonna centrale*/}
-                <Col xs={5}>
-                    {/*Chart "spese per metodo"*/}
-                    <div style={{...Card_Styles.cards, height: "49%"}}>
-                        <h5>Spese per metodo</h5>
-                        {showTagsChart() }
-                    </div>
-
-                    {/*Chart "spese per categoria"*/}
-                    <div style={{...Card_Styles.cards, height: "49%"}}>
-                        <h5>Spese per categoria</h5>
-                        {showMonthTagsChart()}
-                    </div>
-                </Col>
-
-                {/*Terza colonna DX*/}
-                <Col xs={3}>
-
-                    <div style={Card_Styles.GaugeCards}>
-                        <h4>Percentuali di spese e risparmi </h4>
-
-                        <div>
-                            <GaugeChart width={100} percentage={totalRatio}/>
-                            <h6>Totali</h6>
-                        </div>
-                        <div>
-                            <GaugeChart width={100} percentage={extraRatio}/>
-                            <h6>Extra</h6>
-                        </div>
-                        <div>
-                            <GaugeChart width={100} percentage={fixedRatio}/>
-                            <h6>Fisse</h6>
-                        </div>
-
-                    </div>
-                </Col>
             </Row>
         </div>
     );
