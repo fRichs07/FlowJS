@@ -14,7 +14,20 @@ class Card_Styles {
         padding: "1rem",
         marginBottom: "15px",
         marginLeft: "15px",
-        height: "100%",
+        height: "85vh",
+        backgroundColor: Flow_colors.primary_color,
+    }
+
+    static cards_flex = {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "25px",
+        padding: "1rem",
+        marginBottom: "15px",
+        marginLeft: "15px",
+        height: "97%",
         backgroundColor: Flow_colors.primary_color,
     }
 
@@ -27,7 +40,7 @@ class Card_Styles {
         padding: "1rem",
         marginBottom: "15px",
         marginLeft: "15px",
-        height: "100%",
+        height: "85vh",
         backgroundColor: Flow_colors.primary_color,
     };
 
@@ -35,9 +48,9 @@ class Card_Styles {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center", // Centra il Gauge e il titolo
-        flex: 1, // Ogni coppia occupa una parte uguale dell'altezza totale
-        width: "100%", // Garantisce che ogni coppia usi tutta la larghezza
+        justifyContent: "center",
+        flex: 1,
+        width: "100%",
     };
 
 }

@@ -45,7 +45,7 @@ const LineChart = ({ data, width, height }) => {
             .datum(data)
             .attr('fill', 'none')
             .attr('stroke', Flow_colors.secondary_color)
-            .attr('stroke-width', 2)
+            .attr('stroke-width', 4)
             .attr('d', line);
 
         // Aggiungere asse X
@@ -53,15 +53,22 @@ const LineChart = ({ data, width, height }) => {
             .append('g')
             .attr('transform', `translate(0,${height - margin.bottom})`)
             .call(d3.axisBottom(x).ticks(width / 80).tickFormat(d3.timeFormat('%b %d')))
+            .call((g) => g.selectAll('path, line').style('stroke', 'white').style('fill', 'none').style('stroke-width', '3px'))
             .selectAll('text')
             .style('text-anchor', 'end')
+            .style("font-size", "12px")
+            .style("font-weight", "bold")
             .attr('transform', 'rotate(-45)');
 
         // Aggiungere asse Y
         svg
             .append('g')
             .attr('transform', `translate(${margin.left},0)`)
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y))
+            .call((g) => g.selectAll('path, line').style('stroke', 'white').style('fill', 'none').style('stroke-width', '3px'))
+            .selectAll('text')
+            .style("font-size", "12px")
+            .style("font-weight", "bold");
 
     }, [data, width, height]);
 
