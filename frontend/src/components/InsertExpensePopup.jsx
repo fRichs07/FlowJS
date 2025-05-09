@@ -4,7 +4,7 @@ import {useState} from "react";
 import axios from "axios";
 
 //     {id: 10, User: "A", Amount: 9, Class: "@fwqda", Date: "6-2-2024", Method:"821-b"},
-function InsertPopup({action, close}) {
+function InsertExpensePopup({action, close}) {
     let [name, setName] = useState('');
     let [amount, setAmount] = useState(0.0);
     let [date, setDate] = useState('');
@@ -110,4 +110,4 @@ function InsertPopup({action, close}) {
     </div>);
 }
 
-export default InsertPopup;
+export default InsertExpensePopup;
