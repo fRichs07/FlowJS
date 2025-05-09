@@ -1,16 +1,14 @@
 from datetime import datetime
 from typing import Dict
-from bson import ObjectId
 
 class Expense:
-    def __init__(self, amount: float, category: str, description: str = "", date: datetime = None, tag: str = "", who: str = "", method: str = "", extra: bool = False):
-        self.amount = amount  # Importo della spesa
-        self.category = category  # Categoria della spesa (es. "Cibo", "Trasporti")
-        self.description = description  # Descrizione opzionale
-        self.date = date or datetime.utcnow()  # Data della spesa
-        self.tag = tag  # Tag opzionale per la spesa
-        self.who = who  # Chi ha effettuato la spesa
-        self.method = method  # Metodo di pagamento
+    def __init__(self, amount: float, description: str = "", date: datetime = None, tag: str = "", who: str = "", method: str = "", extra: bool = False):
+        self.amount = amount
+        self.description = description
+        self.date = date or datetime.utcnow()
+        self.tag = tag
+        self.who = who
+        self.method = method
         self.extra = extra
 
     def to_dict(self) -> Dict:

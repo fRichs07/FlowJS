@@ -2,54 +2,22 @@ import json
 
 from flask import request, jsonify, Response
 from .models.API import *
+from .models.Accounts import Accounts
 from .models.Expense import Expense
-
-# Dataset data
+from .models.Method import Method
+from .models.Recurrent_Expense import RecurrentExpense
+from .models.Tag import Tag
+from .models.Who import Who
 
 date_format = "%Y-%m-%d"
 
-data_ds = [
-    {"id": 0, "User": "Home", "Amount": 122.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 1, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 2, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 3, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 4, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 5, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 6, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 7, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 8, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-    {"id": 9, "User": "Home", "Amount": 12.3, "Class": "@fat", "Date": "1-2-2024", "Method": "883-b"},
-
-]
-
-## Bar charts
-data_chart = [
-    {"label": 'Tabacco', "value": 40},
-    {"label": 'Bollette', "value": 80},
-    {"label": 'Casa', "value": 45},
-    {"label": 'Cibo', "value": 60},
-    {"label": 'Vestiti', "value": 20},
-    {"label": 'Extra', "value": 90},
-    {"label": 'Animali', "value": 50},
-]
-
-## Gauge charts data
-data_gauge_total = 0.4
-data_gauge_extra = 0.2
-data_gauge_fixed = 0.4
-
-## --------------------------------------------------------- ##
-
-## General function to send a json
-def send_json(data):
-    if data is not None:
-        return data
-    else:
-        return []
-
 def init_routes(app):
 
+    # ---------------------------------------------------------------------- #
+    # ---------------------------- Expenses -------------------------------- #
+    # ---------------------------------------------------------------------- #
 
+    # Expenses
 
     @app.route('/expenses/', methods=['POST'])
     def insert_new_expense():
@@ -63,7 +31,6 @@ def init_routes(app):
             who = data['who']
             method = data['method']
             desc = data['desc']
-            category = data['category']
             extra = (data['extra'])
 
             if amount < 0:
@@ -71,10 +38,10 @@ def init_routes(app):
             if not date:
                 return jsonify({"error": "Date not provided or error in formatting (%d-%m-%Y %H:%M)"}), 500
 
-            if not (date and tag and who and method and desc and category):
+            if not (date and tag and who and method and desc):
                 return jsonify({"error": "Some fields are missing"}), 500
 
-            new_expense = Expense(amount, category, desc, date, tag, who, method, extra)
+            new_expense = Expense(amount, desc, date, tag, who, method, extra)
             print( insert_expense(new_expense) )
             return  new_expense.__repr__()# restituisce i dati in formato JSON
         else:
@@ -87,11 +54,150 @@ def init_routes(app):
         print(get_expenses())
         return Response(json_data, mimetype='application/json')
 
+    # Recurrent Expenses
+    @app.route('/rec_expenses/', methods=['POST'])
+    def insert_new_rec_expense():
+        """Insert a new expense in the database"""
+        if request.method == "POST":
+            data = request.get_json() or request.form.to_dict()
+
+            amount = int(data['amount'])
+            date = datetime.strptime(data['date'], date_format)
+            tag = data['tag']
+            who = data['who']
+            method = data['method']
+            desc = data['desc']
+            category = data['category']
+            extra = data['extra']
+            cadency = int(data['cadency'])
+            tag_id = int(data['tag_id'])
+            method_id = int(data['method_id'])
+            who_id = int(data['who_id'])
+
+            if amount < 0:
+                return jsonify({"error": "Amount must be positive"}), 500
+            if not date:
+                return jsonify({"error": "Date not provided or error in formatting (%d-%m-%Y %H:%M)"}), 500
+
+            if not (date and tag and who and method and desc and category):
+                return jsonify({"error": "Some fields are missing"}), 500
+
+            new_expense = RecurrentExpense(amount, desc, date, tag, who, method, extra, cadency, tag_id, method_id, who_id)
+            insert_recurrent_expense(new_expense)
+            return  new_expense.__repr__()# restituisce i dati in formato JSON
+        else:
+            return "Richiesta POST, ricevuta GET"
+
+
+    @app.route('/rec_expenses/', methods=['GET'])
+    def get_rec_exp():
+        json_data = json.dumps(get_rec_expenses(), default=custom_serializer)
+        print(get_rec_expenses())
+        return Response(json_data, mimetype='application/json')
+
+    # --------------------------------------------------------------------- #
+    # ------------------------------ Tag ---------------------------------- #
+    # --------------------------------------------------------------------- #
+    @app.route('/tags/', methods=['GET'])
+    def get_tag():
+        json_data = json.dumps(get_tags(), default=custom_serializer)
+        return Response(json_data, mimetype='application/json')
+
+    @app.route('/tags/', methods=['POST'])
+    def insert_tag():
+        if request.method == "POST":
+            data = request.get_json() or request.form.to_dict()
+
+            if data is None:
+                return jsonify({"error": "No data provided"}), 500
+
+            name = data['name']
+            new_tag = Tag(-1,name)
+            insert_tags(new_tag)
+        return None
+
+    # ------------------------------------------------------------------- #
+    # ---------------------------- User --------------------------------- #
+    # ------------------------------------------------------------------- #
+
+    @app.route('/users/', methods=['GET'])
+    def get_usrs():
+        json_data = json.dumps(get_users(), default=custom_serializer)
+        return Response(json_data, mimetype='application/json')
+
+    @app.route('/users/', methods=['POST'])
+    def insert_usrs():
+        if request.method == "POST":
+            data = request.get_json() or request.form.to_dict()
+
+            if data is None:
+                return jsonify({"error": "No data provided"}), 500
+
+            name = data['name']
+            new_user = Who(-1, name)
+
+            insert_users(new_user)
+        return None
+
+    # ---------------------------------------------------------------------- #
+    # ---------------------------- Methods --------------------------------- #
+    # ---------------------------------------------------------------------- #
+
+    @app.route('/methods/', methods=['GET'])
+    def get_methds():
+        db_data = get_methods()
+        return jsonify(db_data)
+
+    @app.route('/methods/', methods=['POST'])
+    def insert_methds():
+        if request.method == "POST":
+            data = request.get_json() or request.form.to_dict()
+
+            if data is None:
+                return jsonify({"error": "No data provided"}), 500
+
+            method_id = int(data['method_id'])
+            name = data['name']
+            new_method = Method(method_id, name)
+
+            insert_methods(new_method)
+        return None
+
+    # ---------------------------------------------------------------------- #
+    # ---------------------------- Accounts --------------------------------- #
+    # ---------------------------------------------------------------------- #
+
+    @app.route('/account/', methods=['GET'])
+    def get_who():
+        json_data = json.dumps(get_account(), default=custom_serializer)
+        return Response(json_data, mimetype='application/json')
+
+    @app.route('/account/', methods=['POST'])
+    def insert_who():
+        if request.method == "POST":
+            data = request.get_json() or request.form.to_dict()
+
+            if data is None:
+                return jsonify({"error": "No data provided"}), 500
+
+            account_id = int(data['method_id'])
+            who_id = int(data['who_id'])
+            value = int(data['value'])
+            name = data['name']
+            method_ids = [int(x) for x in data['method_ids']] ## da controllare
+            new_account = Accounts(account_id,who_id, name, value, method_ids)
+
+            insert_accounts(new_account)
+        return None
+
+    # ---------------------------------------------------------------------- #
+    # ----------------------------- CHARTS --------------------------------- #
+    # ---------------------------------------------------------------------- #
 
 # --------------- BAR CHARTS ROUTES -----------------------#
     @app.route('/chart/tags/', methods=['GET'])
     def get_chart_tags():
-        db_data = get_tags_aggregate()
+        db_data = get_expenses_by_tags()
         return jsonify(db_data)
 
     @app.route('/chart/monthly_tags/', methods=['GET'])
@@ -117,7 +223,7 @@ def init_routes(app):
     ## TODO: dopo la creazione dell ownings page
     @app.route("/chart/fixedp/", methods=['GET'])
     def send_fixed_percentage():
-        return str(0.11)
+        return str(0.13)
 
     ## Sends the percentage of the monthly spending out of the heritage
     ## TODO: dopo la creazione dell ownings page
