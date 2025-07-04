@@ -1,7 +1,7 @@
 import json
 
 from flask import request, jsonify, Response
-from .models.API import *
+from app.API import *
 from .models.Accounts import Accounts
 from .models.Expense import Expense
 from .models.Method import Method
@@ -42,7 +42,10 @@ def init_routes(app):
                 return jsonify({"error": "Some fields are missing"}), 500
 
             new_expense = Expense(amount, desc, date, tag, who, method, extra)
-            return  new_expense.__repr__()# restituisce i dati in formato JSON
+            insert_expense(new_expense)
+            print(new_expense.to_dict())
+
+            return jsonify({"success": True}),200
         else:
             return "Richiesta POST, ricevuta GET"
 
