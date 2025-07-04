@@ -16,7 +16,6 @@ class Expense:
         return {
             # "_id": self._id,
             "amount": self.amount,
-            "category": self.category,
             "description": self.description,
             "date": self.date,
             "tag": self.tag,
@@ -30,7 +29,6 @@ class Expense:
         """Crea un'istanza di Expense da un documento MongoDB"""
         return cls(
             amount=data["amount"],
-            category=data["category"],
             description=data.get("description", ""),
             date=data.get("date", datetime.utcnow()),
             tag=data.get("tag", ""),

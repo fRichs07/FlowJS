@@ -44,7 +44,7 @@ function InsertMethodPopup({ show, onHide }) {
     const saveAccount = () => {
         const today = new Date().toLocaleDateString('it-IT'); // formato gg/mm/aaaa
 
-        axios.post('http://localhost:5000/accounts/', {
+        axios.post('http://localhost:5000/account/', {
             account_name: selectedAccountNames,
             who_id: selectedWhoIds,
             balance: 0,
@@ -52,6 +52,9 @@ function InsertMethodPopup({ show, onHide }) {
             desc: "Inserito tramite popup",
             methods: []
         })
+            .then( e => {
+                console.log(e)
+            })
             .catch(err => {
                 console.log("Errore durante il salvataggio:", err);
             });

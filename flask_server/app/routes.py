@@ -31,7 +31,7 @@ def init_routes(app):
             who = data['who']
             method = data['method']
             desc = data['desc']
-            extra = (data['extra'])
+            extra = bool(data['extra'])
 
             if amount < 0:
                 return jsonify({"error": "Amount must be positive"}), 500
@@ -42,7 +42,6 @@ def init_routes(app):
                 return jsonify({"error": "Some fields are missing"}), 500
 
             new_expense = Expense(amount, desc, date, tag, who, method, extra)
-            print( insert_expense(new_expense) )
             return  new_expense.__repr__()# restituisce i dati in formato JSON
         else:
             return "Richiesta POST, ricevuta GET"
@@ -51,7 +50,6 @@ def init_routes(app):
     @app.route('/expenses/', methods=['GET'])
     def get_exp():
         json_data = json.dumps(get_expenses(), default=custom_serializer)
-        print(get_expenses())
         return Response(json_data, mimetype='application/json')
 
     # Recurrent Expenses
@@ -161,6 +159,7 @@ def init_routes(app):
             new_method = Method(method_id, name)
 
             insert_methods(new_method)
+            return jsonify({"success": True}),200
         return None
 
     # ---------------------------------------------------------------------- #
@@ -168,26 +167,30 @@ def init_routes(app):
     # ---------------------------------------------------------------------- #
 
     @app.route('/account/', methods=['GET'])
-    def get_who():
+    def get_accs():
         json_data = json.dumps(get_account(), default=custom_serializer)
         return Response(json_data, mimetype='application/json')
 
     @app.route('/account/', methods=['POST'])
-    def insert_who():
+    def insert_acc():
         if request.method == "POST":
+
             data = request.get_json() or request.form.to_dict()
 
             if data is None:
                 return jsonify({"error": "No data provided"}), 500
 
-            account_id = int(data['method_id'])
-            who_id = int(data['who_id'])
-            value = int(data['value'])
-            name = data['name']
-            method_ids = [int(x) for x in data['method_ids']] ## da controllare
-            new_account = Accounts(account_id,who_id, name, value, method_ids)
+            print(data)
+            account_id = (data['account_name'])
 
-            insert_accounts(new_account)
+            who_id = (data['who_id'])
+            value = int(data['balance'])
+            name = data['account_name']
+            method_ids = [] ## da controllare
+            new_account = Accounts(-1,who_id, name, value, method_ids)
+
+            insert_account(new_account)
+            return jsonify({"success": True}),200
         return None
 
     # ---------------------------------------------------------------------- #

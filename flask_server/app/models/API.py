@@ -148,7 +148,7 @@ def get_account():
     documents = find_all_documents("accounts")
     return documents
 
-def insert_accounts(account):
+def insert_account(account):
     res = insert_document("accounts", account.to_dict())
     return res
 

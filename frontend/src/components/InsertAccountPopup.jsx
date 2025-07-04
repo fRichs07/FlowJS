@@ -2,35 +2,29 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from "axios";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Form } from "react-bootstrap";
+
+function fetchUsers() {
+
+    return axios(
+        {
+            method: 'post',
+            url: 'http://localhost:5000/users/',
+        })
+        .then(res => {
+
+            return res;
+        })
+
+}
 
 function InsertAccountPopup({ show, onHide }) {
     const [accountName, setAccountName] = useState("");
     const [selectedWhoIds, setSelectedWhoIds] = useState([]);
     const [description, setDescription] = useState("");
 
-    const [whoIdList, setWhoIdList] = useState([
-        "alice01",
-        "bob_the_builder",
-        "carla.dev",
-        "daniele92",
-        "elisa.mkt",
-        "francoUX",
-        "giulia_admin"
-    ]);
-
-    //
-    // // Simula il caricamento degli utenti disponibili (who_id)
-    // useEffect(() => {
-    //     axios.get('http://localhost:5000/users/') // TODO: cambia con l'endpoint corretto
-    //         .then(res => {
-    //             setWhoIdList(res.data); // presuppone che sia un array di stringhe
-    //         })
-    //         .catch(err => {
-    //             console.log("Errore nel caricamento degli utenti:", err);
-    //         });
-    // }, []);
+    const [whoIdList, setWhoIdList] = useState(['richi']);
 
     const handleAccountNameChange = (e) => setAccountName(e.target.value);
     const handleDescriptionChange = (e) => setDescription(e.target.value);
@@ -44,7 +38,7 @@ function InsertAccountPopup({ show, onHide }) {
         const today = new Date().toLocaleDateString('it-IT'); // formato gg/mm/aaaa
         const formattedDate = today.split('/').reverse().join('-'); // formato "aaaa-mm-gg"
 
-        axios.post('http://localhost:5000/accounts/', {
+        axios.post('http://localhost:5000/account/', {
             account_name: accountName,
             who_id: selectedWhoIds,
             balance: 0,
@@ -66,6 +60,21 @@ function InsertAccountPopup({ show, onHide }) {
         onHide();
     }
 
+    useEffect(() => {
+        const getUsers = async () => {
+            if (whoIdList.length === 0) { // da problemi se il ds è vuoto!
+                try {
+                    const response = await fetchUsers();
+                    console.log(response.data);
+                    response.data.forEach((user) => {setWhoIdList([...whoIdList, user.name])})
+                } catch (error) {
+                    console.error("Errore nel fetch:", error);
+                }
+            }
+        };
+
+        getUsers();
+    }, [whoIdList]);
     return (
         <Modal show={show} onHide={onHide} centered>
             <Modal.Header closeButton>
