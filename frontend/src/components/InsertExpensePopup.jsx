@@ -26,7 +26,6 @@ function InsertExpensePopup({action, close}) {
                 tag: cls,
                 method: method,
                 desc: description,
-                category: category,
                 extra: extraExpense,
             }
         })
