@@ -1,5 +1,7 @@
 .left_col {
   border-radius: 25px 25px 0 0;
+  width: auto
+
 }
 
 .rdt_TableRow:hover {
@@ -12,12 +14,5 @@
   background-color: rgba(255, 255, 255, 0);
   color: #fff;
   border: solid 1px #222328;
-
-}
-
-.card {
-  background: var(--surface-card);
-  padding: 2rem;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+  width: fit-content;
 }

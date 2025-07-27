@@ -2,8 +2,12 @@ from flask import Flask
 from .db import init_db
 from .routes import init_routes
 from flask_cors import CORS
+import logging
 
 def create_app():
+    logging.basicConfig(filename='record.log', level=logging.DEBUG)
+
+
     app = Flask(__name__)
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 

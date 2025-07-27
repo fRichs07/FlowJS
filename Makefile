@@ -1,6 +1,6 @@
 # Definisci i nomi dei container
-FE = flowjs_frontend_1
-BE = flowjs_flask_server_1
+FE = flowjs-frontend-1
+BE = flowjs-flask_server-1
 DB = mongodb
 
 # Avvia i container in background

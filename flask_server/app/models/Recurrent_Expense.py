@@ -2,7 +2,10 @@ import math
 from datetime import datetime
 from typing import Dict
 
-class RecurrentExpense:
+from app.models.model_interfaces.Model_Interface import ModelInterface
+
+
+class RecurrentExpense(ModelInterface):
     def __init__(self,
                  amount: float,
                  description: str = "",

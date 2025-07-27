@@ -1,6 +1,9 @@
 from typing import Dict
 
-class Method:
+from app.models.model_interfaces.Model_Interface import ModelInterface
+
+
+class Method(ModelInterface):
     def __init__(self,
                  method_id : int = -1,
                  name : str = "",

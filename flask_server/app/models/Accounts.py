@@ -1,8 +1,10 @@
 import math
 from typing import Dict, List
 
+from app.models.model_interfaces.Model_Interface import ModelInterface
 
-class Accounts:
+
+class Accounts(ModelInterface):
     def __init__(self,
                  account_id : int = -1,
                  who_id = None,

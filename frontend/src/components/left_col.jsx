@@ -33,27 +33,27 @@ const columns = [
     {
         name: "Utente",
         selector: (row) => row.who,
-        width: "90px",
+        width: "auto",
 
     },
     {
         name: "Tipo",
-        selector: (row) => row.category,
-        width: "90px",
+        selector: (row) => row.tag,
+        width: "auto",
 
 
     },
     {
         name: "Data",
         selector: (row) => row.date,
-        width: "90px",
+        width: "auto",
 
     },
 
     {
         name: "$",
         selector: (row) => row.amount,
-        width: "85px",
+        width: "auto",
 
     },
 
@@ -97,6 +97,7 @@ function LeftCol() {
             if (tableData == null) { // da problemi se il ds è vuoto!
                 try {
                     const response = await fetchTableData();
+                    console.log(response.data);
                     setTableData(response.data);
                 } catch (error) {
                     console.error("Errore nel fetch:", error);
@@ -132,8 +133,8 @@ function LeftCol() {
     return (
         <div>
             <div style={Dataset_style.DatasetButtonsContainer}>
-                <ButtonDS Icon={<IoFilter size={20}/>} PopupFunction={(close) => {
-                    var a = tableData
+                <ButtonDS Icon={<IoFilter size={25}/>} PopupFunction={(close) => {
+                    let a = tableData
                     if(a===null) {
                         a = []
                     }
@@ -144,18 +145,18 @@ function LeftCol() {
                     () => {
                         setTableData([])
                     }}>
-                    <FaArrowRotateLeft size={15}/>
+                    <FaArrowRotateLeft size={20}/>
                 </button>
 
                 <ButtonDS
-                    Icon={<TbSortAscending size={20}/>}
+                    Icon={<TbSortAscending size={25}/>}
                     PopupFunction={(close) => {
                         close();
                     }}
                 />
 
                 <ButtonDS
-                    Icon={<FaPen size={15}/>}
+                    Icon={<FaPen size={20}/>}
                     PopupFunction={(close) => {
                         close();
                     }}

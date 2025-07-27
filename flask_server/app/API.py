@@ -1,4 +1,8 @@
+from flask import app
+
 from app.db import *
+from app.models import Who
+
 
 # ------------------------ Expenses ------------------------------------ #
 
@@ -14,6 +18,7 @@ def get_expenses():
 def insert_expense(expense):
     res = insert_document("expenses", expense.to_dict())
     return res
+
 
 def get_expenses_by_tags():
     collection = get_collection('expenses')
@@ -31,6 +36,7 @@ def get_expenses_by_tags():
 
     return [{'label': i["_id"], 'value': i["value"]} for i in aggr]
 
+
 def get_monthly_tag_expenses():
     collection = get_collection('expenses')
     pipeline = [
@@ -39,7 +45,7 @@ def get_monthly_tag_expenses():
                 "amount": 1,
                 "tag": 1,
                 "month": {
-                    "$dateToString": { "format": "%m-%Y", "date": "$date" }
+                    "$dateToString": {"format": "%m-%Y", "date": "$date"}
                 }
             }
         },
@@ -49,7 +55,7 @@ def get_monthly_tag_expenses():
                     "month": "$month",
                     "tag": "$tag"
                 },
-                "value": { "$sum": "$amount" }
+                "value": {"$sum": "$amount"}
             }
         },
         {
@@ -61,10 +67,11 @@ def get_monthly_tag_expenses():
     ]
     aggr = list(collection.aggregate(pipeline))
     return [{"month": doc["_id"]["month"], "tag": doc["_id"]["tag"], "value": doc["value"]} for doc in aggr]
+
+
 # ------------------------ Recurrent Expenses ------------------------------------ #
 
 def get_rec_expenses():
-
     documents = find_all_documents("recurrent_expenses")
     for doc in documents:
         if "date" in doc and isinstance(doc["date"], datetime):
@@ -76,6 +83,7 @@ def get_rec_expenses():
 def insert_recurrent_expense(rec_expense):
     res = insert_document("recurrent_expenses", rec_expense.to_dict())
     return res
+
 
 def get_recurrent_expenses_by_tags():
     collection = get_collection('recurrent_expenses')
@@ -93,11 +101,13 @@ def get_recurrent_expenses_by_tags():
 
     return [{'label': i["_id"], 'value': i["value"]} for i in aggr]
 
+
 # ---------------------------- TAGS ------------------------------------ #
 
 def get_tags():
     documents = find_all_documents("tags")
     return documents
+
 
 def insert_tags(tag):
     collection = get_collection('tags')
@@ -108,9 +118,10 @@ def insert_tags(tag):
 
     max_id = result[0]['max_tag_id'] if result else 0
 
-    tag.tag_id = max_id +  1
+    tag.tag_id = max_id + 1
     res = insert_document("tags", tag.to_dict())
     return res
+
 
 # ---------------------------- METHODS ------------------------------------ #
 
@@ -118,27 +129,24 @@ def get_methods():
     documents = find_all_documents("methods")
     return documents
 
+
 def insert_methods(method):
     res = insert_document("methods", method.to_dict())
     return res
 
+
 # ---------------------------- USERS ------------------------------------ #
 
 def get_users():
-
     documents = find_all_documents("users")
     return documents
 
-def insert_users(user):
-    collection = get_collection('users')
-    pipeline = [
-        {"$group": {"_id": None, "max_id": {"$max": "$user_id"}}}
-    ]
-    result = list(collection.aggregate(pipeline))
 
-    max_id = result[0]['max_id'] if result else 0
-    user.who_id = max_id + 1
-
+def insert_users(user: Who):
+    isPresent: bool = len(find_documents("users", {'name' : user.name})) > 0
+    print(type(find_documents("users", {'name' : user.name})))
+    if isPresent:
+        return None
     res = insert_document("users", user.to_dict())
     return res
 
@@ -148,9 +156,11 @@ def get_account():
     documents = find_all_documents("accounts")
     return documents
 
+
 def insert_account(account):
     res = insert_document("accounts", account.to_dict())
     return res
+
 
 # --------------------------- Ratios ------------------------------------ #
 

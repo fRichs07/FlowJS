@@ -115,7 +115,8 @@ def init_routes(app):
             name = data['name']
             new_tag = Tag(-1,name)
             insert_tags(new_tag)
-        return None
+
+        return Response(json.dumps({"success": True}),mimetype='application/json')
 
     # ------------------------------------------------------------------- #
     # ---------------------------- User --------------------------------- #
@@ -130,15 +131,18 @@ def init_routes(app):
     def insert_usrs():
         if request.method == "POST":
             data = request.get_json() or request.form.to_dict()
-
             if data is None:
                 return jsonify({"error": "No data provided"}), 500
 
             name = data['name']
-            new_user = Who(-1, name)
+            new_user = Who(name)
 
-            insert_users(new_user)
-        return None
+            ret = insert_users(new_user)
+            if not ret:
+                app.logger.debug(f'Inserimento dell utente {name} : presente nel db')
+                return jsonify({"success": False, 'message':'User already exists'}), 301
+
+        return jsonify({"success": True}),200
 
     # ---------------------------------------------------------------------- #
     # ---------------------------- Methods --------------------------------- #

@@ -1,9 +1,7 @@
-from typing import Dict
+from app.models.model_interfaces.Model_Interface import ModelInterface
 
-class Who:
+class Who(ModelInterface):
     def __init__(self,
-                 who_id : int = -1,
                  name : str = "",
                  ):
-        self.who_id = who_id
         self.name = name

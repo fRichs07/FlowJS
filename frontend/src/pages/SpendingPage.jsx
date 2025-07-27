@@ -146,7 +146,6 @@ function SpendingPage() {
         };
 
         fetchData();
-        console.log(tagsAggr)
     }, [tagsAggr]);
 
     useEffect(() => {
@@ -175,7 +174,10 @@ function SpendingPage() {
                         <LeftCol/>
                     </div>
                 </Col>
+                <Col xs={8}>
+
                 <CenterCol montTagsAggr={montTagsAggr} tagsAggr={tagsAggr}/>
+                </Col>
                 <RightCol fixedRatio={fixedRatio} extraRatio={extraRatio} totalRatio={totalRatio}/>
 
             </Row>

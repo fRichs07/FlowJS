@@ -4,7 +4,7 @@ import Flow_colors from "./colors.js";
 class Dataset_style {
     static DatasetButtonsContainer = {
         marginBottom: "10px",
-        marginLeft: "130px",
+        marginLeft: "100px",
         display: "flex",
         alignItems: "center", // Per allineamento verticale
         justifyContent: "flex-start" // Facoltativo: per allineamento orizzontale
@@ -20,15 +20,14 @@ class Dataset_style {
     static customStyles = {
         header: {
             style: {
-                textAlign: 'center', // Center text horizontally
-                justifyContent: 'center', // Useful for aligning content like icons
-
+                textAlign: 'center',
+                justifyContent: 'center',
             },
         },
         headCells: {
             style: {
-                textAlign: 'center', // Center text horizontally
-                justifyContent: 'center', // Useful for aligning content like icons
+                textAlign: 'center',
+                justifyContent: 'center',
             },
         },
         headRow: {
@@ -37,8 +36,8 @@ class Dataset_style {
                 color: Flow_colors.text_color, // Colore del testo nell'header
                 fontSize: "15px",
                 fontWeight: "bold",
-                textAlign: 'center', // Center text horizontally
-                justifyContent: 'center', // Useful for aligning content like icons
+                textAlign: 'center',
+                justifyContent: 'center',
             }
         },
         rows: {
@@ -60,10 +59,10 @@ class Dataset_style {
 
         pagination: {
             style: {
-                backgroundColor: Flow_colors.background_color, // Sfondo della paginazione
+                backgroundColor: Flow_colors.background_color,
                 color: Flow_colors.text_color,
                 border: "1px solid " + Flow_colors.background_color,
-                borderBottomLeftRadius: "25px", // Arrotondamento solo all'angolo inferiore sinistro
+                borderBottomLeftRadius: "25px",
                 borderBottomRightRadius: "25px", // Arrotondamento solo all'angolo inferiore destro
                 overflow: "hidden" // Per evitare che il contenuto esca dai bordi arrotondati
 
